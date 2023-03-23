@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>HieroTweet</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				font-family: Arial, Helvetica, sans-serif;
+			}
+
+			.mainContent {
+				width: 40%;
+				min-width: 650px;
+			}
+
+			.mainContainer {
+				display: flex;
+				justify-content: center;
+			}
+			
+			.mainContainer > div {
+				width: 100%;
+			}
+
+			.mainTopBar {
+				padding: 5px 20px;
+				border: 1px solid #eee;
+			}
+
+			.mainTopBar .name {
+				font-size: 1.3em;
+				font-weight: bold;
+				display: block;
+				margin-bottom: 3px;
+			}
+
+			.mainTopBar .tweetCount {
+				font-size: 0.85em;
+				color: #999;
+			}
+
+			.mainImg img {
+				width: 100%;
+			}
+
+			.mainImg {
+				max-height: 250px;
+				overflow: hidden;
+			}
+
+			.mainBio {
+				position: relative;
+				border: 1px solid #eee;
+			}
+
+			.mainBio .bioImg {
+				width: 133px;
+				height: 133px;
+				border-radius: 50%;
+				border: 5px solid white;
+				position: relative;
+				top: -66px;
+				left: 20px;
+				cursor: pointer;
+				transition: 0.2s;
+			}
+
+			.mainBio .bioImg:hover {
+				filter: brightness(0.9);
+			}
+
+			.mainBio .name {
+				display: block;
+				font-size: 1.3em;
+				font-weight: bold;
+				margin: -50px 0 5px 20px;
+			}
+
+			.mainBio .tag {
+				display: block;
+				font-size: 0.9em;
+				color: #888;
+				margin: 0 0 10px 20px;
+			}
+
+			.mainBio .bio {
+				display: block;
+				margin: 0 0 10px 20px;
+			}
+
+			.bioIcons {
+				padding: 0 0 10px 20px;
+				color: #777;
+			}
+
+			.bioIcons .icon {
+				padding-right: 10px;
+			}
+
+			alink {
+				color: rgb(29, 155, 240);
+				cursor: pointer;
+			}
+
+			alink:hover {
+				text-decoration: underline;
+			}
+
+			bold {
+				font-weight: bold;
+				color: black;
+			}
+
+			.tweet {
+				padding: 9px 20px 20px 20px;
+				position: relative;
+				border: 1px solid #eee;
+				border-top: none;
+				cursor: pointer;
+			}
+			
+			.tweet .image img {
+				border-radius: 5px;
+				margin-top: 5px;
+				max-width: 100%;
+			}
+
+			.tweetImg {
+				width: 48px;
+				height: 48px;
+				border-radius: 50%;
+				position: absolute;
+				top: 30px;
+				left: 15px;
+			}
+
+			.tweetInfo {
+				color: #777;
+			}
+
+			.tweetIcons, .tweetContent, .tweetTop {
+				margin-left: 68px;
+			}
+
+			.tweetIcons {
+				margin-top: 8px;
+				width: calc(100% - 400px);
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.tweetContent {
+				margin-top: 5px;
+			}
+
+			pin {
+				margin-left: 50px;
+				color: #666 !important;
+				font-weight: bold;
+				font-size: 0.88em;
+				padding-bottom: 5px;
+				display: block;
+			}
+			
+			.sidebar {
+				padding: 10px;
+			}
+			
+			.sidebar > div {
+				border: 1px solid #eee;
+				border-radius: 10px;
+				padding: 10px 15px;
+			}
+			
+			.newTo span {
+				display: block;
+				font-size: 0.8em;
+				margin: 5px 0;
+				color: #555;
+			}
+			
+			.sidebarHeader {
+				font-weight: bold;
+				font-size: 1.3em !important;
+				color: black !important;
+			}
+			
+			.sidebarButton {
+				width: 100%;
+				text-align: center;
+				padding: 10px 0;
+				border-radius: 10px;
+				border: 1px solid #ddd;
+				user-select: none;
+				cursor: pointer;
+				transition: 0.2s;
+				font-size: 1em !important;
+				color: black !important;
+			}
+			
+			.sidebarButton:hover {
+				background: #eee;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mainContainer">
+			<div></div>
+			<div class="mainContent">
+				<div class="mainTopBar">
+					<span class="name"></span>
+					<span class="tweetCount"></span>
+				</div>
+				<div class="mainImg">
+					<img draggable="false">
+				</div>
+				<div class="mainBio">
+					<img class="bioImg" draggable="false">
+					<span class="name"></span>
+					<span class="tag"></span>
+					<span class="bio"></span>
+					<div class="bioIcons">
+						<span class="icon"><span class="fa fa-location-dot"></span> <span id="location"></span></span>
+						<span class="icon"><span class="fa fa-calendar-days"></span> Joined <span id="joinedDate"></span></span><br><br>
+						<span class="icon"><bold id="following"></bold> Following</span>
+						<span class="icon"><bold id="followers"></bold> Followers</span>
+					</div>
+				</div>
+				<div class="mainTweets"></div>
+			</div>
+			<div class="sidebar">
+				<div class="newTo">
+					<span class="sidebarHeader">New to HieroTweet?</span>
+					<span>Sign up now to get your own personalized pyramid!</span>
+					<span class="sidebarButton">Create account</span>
+					<span>By signing up, you agree to live in accordance with the Ma'at.</span>
+				</div>
+			</div>
+		</div>
+		<script>
+			const username = "Kefennu";
+			const tweetCount = "13";
+			const profileImg = "tut.jpg";
+			const profileTag = "@Kefennu777";
+			const profileBio = "I am a scribe and father living on the banks of the Nile River. Let's journey together through the marvels of our civilization!";
+			const joinedDate = "2577 BCE";
+			const currentLocation = "Letopolis, Egypt";
+			const following = "17";
+			const followers = "15";
+			const backgroundImg = "pyramids.jpeg";
+
+			document.getElementById("location").innerHTML = currentLocation;
+			document.getElementById("joinedDate").innerHTML = joinedDate;
+			document.getElementById("following").innerHTML = following;
+			document.getElementById("followers").innerHTML = followers;
+			document.querySelector(".mainBio .bioImg").src = profileImg;
+			document.querySelector(".mainBio .bio").innerHTML = profileBio;
+			document.querySelector(".mainBio .tag").innerHTML = profileTag;
+			document.querySelector(".mainBio .name").innerHTML = username;
+			document.querySelector(".mainTopBar .name").innerHTML = username;
+			document.querySelector(".mainTopBar .tweetCount").innerHTML = tweetCount + " Tweets";
+			document.querySelector(".mainImg img").src = backgroundImg;
+
+			function createTweet(options) {
+				const pinnedHTML = options.pinned ? `<pin><span class="fa fa-thumbtack"></span> Pinned by ${username}</pin>` : "";
+				const retweetedHTML = options.retweeted ? `<pin><span class="fa fa-retweet"></span> ${username} Retweeted</pin>` : "";
+				const imageHTML = options.image ? `<div class="image"><img src="${options.image}"></div>` : "";
+				document.querySelector(".mainTweets").innerHTML += `
+					<div class="tweet">
+						${pinnedHTML}
+						${retweetedHTML}
+						<img class="tweetImg" src="${options.profileImg || profileImg}" draggable="false" ${!options.pinned && !options.retweeted ? "style='top: 10px;'" : ""}>
+						<div class="tweetTop">
+							<div class="tweetInfo">
+								<span class="name"><bold>${options.username || username}</bold></span>&nbsp;&nbsp;
+								<span class="tag">${options.profileTag || profileTag}</span>&nbsp;&bull;
+								<span class="date">${options.date}</span>
+							</div>
+						</div>
+						<div class="tweetContent">
+							${options.content}
+							${imageHTML}
+						</div>
+						<div class="tweetIcons">
+							<span class="icon"><span class="fa fa-comment"></span> ${options.comments}</span>
+							<span class="icon"><span class="fa fa-retweet"></span> ${options.retweets}</span>
+							<span class="icon"><span class="fa fa-heart"></span> ${options.likes}</span>
+						</div>
+					</div>
+				`;
+			}
+			
+			createTweet({
+				date: "2569 BCE",
+				content: "Imhotep was the architect for the pharaoh Djoser, and he designed Djoser's step pyramid, the first pyramid in Egypt! The step pyramid was a significant evolution in the building of tombs, from pits in the sand all the way to the huge pyramids we have today. Without Imhotep, we might still be using mastabas! [endnote 5] <alink>#PyramidBuilding</alink> <alink>#rolemodel</alink>",
+				likes: "8",
+				retweets: "6",
+				comments: "5",
+				image: "steppyramid.webp"
+			});
+			
+			createTweet({
+				date: "2569 BCE",
+				content: "Today is the Wepet-Renpet Festival, when we celebrate the death and rebirth of Osiris. I'll be having a feast with my family. [endnote 6] <alink>#WepetRenpet</alink>",
+				likes: "5",
+				retweets: "0",
+				comments: "1"
+			});
+			
+			createTweet({
+				date: "2570 BCE",
+				content: "So happy to see the Great Pyramid finally completed, and proud to have been part of this amazing project! It couldn't have been done without <alink>@Hemiunu</alink>, who oversaw the building of the pyramid, along with many other impressive construction projects. [endnote 4] <alink>#rolemodel</alink>",
+				likes: "5",
+				retweets: "2",
+				comments: "0"
+			});
+			
+			createTweet({
+				retweeted: true,
+				date: "2570 BCE",
+				content: "Just oversaw the completion of the Great Pyramid of Giza - an engineering marvel! I'm proud to have contributed to such an iconic structure that will stand the test of time. <alink>#GreatPyramid</alink>",
+				username: "Hemiunu",
+				profileTag: "@Hemiunu",
+				profileImg: "hemiunu.png",
+				likes: "18K",
+				retweets: "17K",
+				comments: "5K"
+			});
+			
+			createTweet({
+				date: "2571 BCE",
+				content: "I've been extremely busy with my work on the pyramid, but I still found time to play Senet, my favourite board game, with my family! This game is so popular because it allows us to escape the monotony of our labourous jobs. [endnote 9] <alink>#FamilyGameNight</alink>",
+				likes: "3",
+				retweets: "2",
+				comments: "2"
+			});
+			
+			createTweet({
+				date: "2572 BCE",
+				content: "Finally finished my training as a scribe! My first project is to help write spells on the walls of the Great Pyramid. This work has to be done exactly right, to ensure our pharaoh enters the afterlife safely. Even a single misplaced symbol can prevent the entire process from working, so the head scribe makes sure to check our work carefully. [endnote 1]",
+				likes: "15",
+				retweets: "8",
+				comments: "11",
+				image: "hieroglyphics.jpeg"
+			});
+			
+			createTweet({
+				retweeted: true,
+				date: "2574 BCE",
+				content: "Are you looking for a purpose in life? Are you searching for a way to leave your mark on history? Then come help build my pyramid! Plus, you get more than a gallon of beer every day! [endnote 3]",
+				username: "Khufu",
+				profileTag: "@Khufu",
+				profileImg: "khufu.jpg",
+				likes: "145K",
+				retweets: "86K",
+				comments: "126K"
+			});
+			
+			createTweet({
+				date: "2574 BCE",
+				content: "Better farming methods are very important to any civilization. When not all the population is farming, it allows people to specialize in other professions. Our complex irrigation systems, devices like shadoofs, and using oxen to pull ploughs changed agriculture forever. [endnote 10] <alink>#AgriculturalIntensification</alink>",
+				likes: "4",
+				retweets: "0",
+				comments: "2"
+			});
+
+			createTweet({
+				date: "2574 BCE",
+				content: "Getting ready for the annual flooding of the Nile! The flooding irrigates the surrounding farmland, allowing us to grow crops in this barren desert once the waters recede in a few months. In the meantime, I'm helping to build the pyramid! [endnote 2]",
+				likes: "5",
+				retweets: "2",
+				comments: "1"
+			});
+			
+			createTweet({
+				date: "2575 BCE",
+				content: "Education is extremely important! I'm currently studying to become a scribe. This requires me to know hieroglyphic and hieratic scripts, which takes a lot of work! It'll all be worth it in the end, though: scribes are very highly regarded. So proud to be following in my father's footsteps! [endnote 1]",
+				likes: "11",
+				retweets: "0",
+				comments: "3"
+			});
+
+			createTweet({
+				date: "2575 BCE",
+				content: "Hieroglyphle 641 5/6<br>Can't believe it took me so many tries! This game is really good for practicing hieroglyphics, which are very difficult and can take years to learn.",
+				likes: "5",
+				retweets: "1",
+				comments: "2",
+				image: "hieroglyphle.png"
+			});
+			
+			createTweet({
+				date: "2575 BCE",
+				content: "I'm so grateful for the medical tools we have access to in Egypt. We have a very low mortality rate due to medical procedures, because cleanliness is very important. If I ever get a sickness, I know I'll have skilled doctors to perform spells and help me get better. [endnote 8]",
+				likes: "2",
+				retweets: "0",
+				comments: "1"
+			});
+			
+			createTweet({
+				date: "2576 BCE",
+				content: "The Nile River is vital to Egypt! It allows us to trade with neighbouring states for valuable items like wood and textiles. It provides transportation, letting us move freely all over Egypt, and makes fertile farmland. [endnote 7] <alink>#NileRiver</alink>",
+				likes: "1",
+				retweets: "0",
+				comments: "0"
+			});
+		</script>
+	</body>
+</html>
